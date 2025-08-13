@@ -16,19 +16,19 @@ db.init_app(app)
 data_manager = DataManager()
 
 @app.route('/')
-def home():
+def index():
     users = data_manager.get_users()
     return render_template('index.html', users=users)
 
 @app.route('/users', methods=['POST'])
-def add_user():
+def create_user():
     user_name = request.form.get('user_name')
     if user_name:
         data_manager.add_user(user_name)
-    return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 @app.route('/users/<int:user_id>/movies', methods=['GET'])
-def list_movies(user_id)
+def get_movies(user_id):
     user = data_manager.get_user_by_id(user_id)
     if not user:
         return "User not found", 404

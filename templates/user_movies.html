@@ -2,37 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ user.name }} 's Movies</title>
-    <style>
-        .movie-poster {
-            width: 150px;
-            height: auto;
-        }
-    </style>
+    <title>{{ user.name }}'s Movies</title>
 </head>
 <body>
-    <h1> {{ user.name }}'s Movies</h1>
+    <h1>{{ user.name }}'s Movies</h1>
 
-    <h2> Favourite Movies</h2>
+    <h2>Favorite Movies</h2>
     {% if movies %}
         <ul>
             {% for movie in movies %}
-              <li>
-                <h3>{{ movie.name }} ({{ movie.year }}) </h3>
-                <p>Director: {{ movie.director }}</p>
-                <img src="{{ movie.poster_url }}" alt="{{ movie.name }} Poster" class="movie-poster">
-              </li>
+                <li>
+                    <h3>{{ movie.name }} ({{ movie.year }})</h3>
+                    <p>Director: {{ movie.director }}</p>
+                    <img src="{{ movie.poster_url }}" alt="{{ movie.name }} Poster" style="width: 150px;">
+                </li>
             {% endfor %}
         </ul>
     {% else %}
-        <p>This user has no favourite movies yet.</p>
+        <p>This user has no favorite movies yet.</p>
     {% endif %}
 
     <h2>Add a New Movie</h2>
-    <form action="{{ url_for('add_movie_for_user', user_id=user.id }}" method="post">
+    <form action="{{ url_for('add_movie_to_user', user_id=user.id) }}" method="post">
         <label for="movie_title">Movie Title:</label>
         <input type="text" id="movie_title" name="movie_title" required>
-        <button type="submit"> Add Movie</button>
+        <button type="submit">Add Movie</button>
     </form>
 </body>
 </html>
