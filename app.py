@@ -20,11 +20,27 @@ def home():
     users = data_manager.get_users()
     return render_template('index.html', users=users)
 
-@app.route('/users')
-def list_users():
-    users = data_manager.get_users()
-    return str(users)
+@app.route('/users', methods=['POST'])
+def add_user():
+    user_name = request.form.get('user_name')
+    if user_name:
+        data_manager.add_user(user_name)
+    return redirect(url_for('home'))
 
+@app.route('/users/<int:user_id>/movies', methods=['GET'])
+def list_movies(user_id)
+    user = data_manager.get_user_by_id(user_id)
+    if not user:
+        return "User not found", 404
+    movies = data_manager.get_movies_by_user(user_id)
+    return render_template('user_movies.html', user=user, movies=movies)
+
+@app.route('/users/<int:user_id>/movies', methods=['POST'])
+def add_movie_for_user(user_id):
+    movie_title = request.form.get('movie_title')
+    if movie_title:
+        data_manager.add_movie(user_id, movie_title)
+    return redirect(url_for('list_movies', user_id=user_id))
 
 
 if __name__ == '__main__':
