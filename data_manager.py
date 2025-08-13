@@ -1,7 +1,8 @@
 import os
 import requests
 from dotenv import load_dotenv
-from .models import db, User, Movie
+from models import db, User, Movie
+from sqlalchemy.orm import sessionmaker
 
 
 class DataManager():
@@ -13,11 +14,6 @@ class DataManager():
         if not self.OMDB_API_KEY:
             raise ValueError("OMDB_API_KEY not found. Please set it in a .env file.")
 
-    def get_users(self):
-        """Returns a list of all users in the database."""
-        return User.query.all()
-
-
     def _fetch_movie_data(self, title):
         """Fetches movie data from the OMDb API."""
         url = f"http://www.omdbapi.com/?apikey={self.OMDB_API_KEY}&t={title}"
@@ -27,6 +23,10 @@ class DataManager():
         if data.get("Response") == "True":
             return data
         return None
+
+    def get_users(self):
+        """Returns a list of all users in the database."""
+        return User.query.all()
 
     def add_user(self, name):
         """Adds a new user to the database."""
