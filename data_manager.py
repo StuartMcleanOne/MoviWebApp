@@ -1,56 +1,99 @@
+"""
+This module provides a DataManager class for all database interactions and 
+external API calls for the MoviWeb App.
+"""
 import os
 import requests
-from dotenv import load_dotenv
 from models import db, User, Movie
-from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file
+load_dotenv()
 
 
-class DataManager():
-
-    def __init__(self):
-        # Loads environment variables from a .env file
-        load_dotenv()
-        self.OMDB_API_KEY = os.getenv("OMDB_API_KEY")
-        if not self.OMDB_API_KEY:
-            raise ValueError("OMDB_API_KEY not found. Please set it in a .env file.")
-
-    def _fetch_movie_data(self, title):
-        """Fetches movie data from the OMDb API."""
-        url = f"http://www.omdbapi.com/?apikey={self.OMDB_API_KEY}&t={title}"
-        response = requests.get(url)
-        data = response.json()
-
-        if data.get("Response") == "True":
-            return data
-        return None
-
-    def get_users(self):
-        """Returns a list of all users in the database."""
-        return User.query.all()
+class DataManager:
+    """
+    Handles all data management logic, including database and API operations.
+    """
 
     def add_user(self, name):
-        """Adds a new user to the database."""
+        """
+        Adds a new user to the database.
+
+        Args:
+            name (str): The name of the user.
+
+        Returns:
+            tuple: A tuple (success_boolean, message_string).
+        """
         try:
             new_user = User(name=name)
             db.session.add(new_user)
             db.session.commit()
-            return new_user
-        except Exception:
+            return True, f"User '{name}' added successfully!"
+        except Exception as e:
             db.session.rollback()
-            return None
+            return False, f"Error adding user: {str(e)}"
 
-    def get_user_by_name(self, name):
-        """Retrieves a user by their name."""
-        return User.query.filter_by(name=name).first()
+    def get_users(self):
+        """
+        Retrieves all users from the database.
+
+        Returns:
+            list: A list of User objects.
+        """
+        return db.session.query(User).all()
 
     def get_user_by_id(self, user_id):
-        """Retrieves a user by their ID."""
-        return User.query.filter_by(id=user_id).first()
+        """
+        Retrieves a user by their ID.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            User: The User object, or None if not found.
+        """
+        return db.session.get(User, user_id)
+
+    def _fetch_movie_data(self, title):
+        """
+        Fetches movie data from the OMDb API.
+
+        Args:
+            title (str): The title of the movie to search for.
+
+        Returns:
+            dict: The movie data, or None if not found or an error occurs.
+        """
+        omdb_api_key = os.getenv("OMDB_API_KEY")
+        if not omdb_api_key:
+            print("OMDB_API_KEY environment variable not set.")
+            return None
+
+        # Make a GET request to the OMDb API
+        response = requests.get(
+            f"http://www.omdbapi.com/?apikey={omdb_api_key}&t={title}"
+        )
+
+        if response.status_code == 200:
+            movie_data = response.json()
+            # Check if the API returned a valid movie response
+            if movie_data.get("Response") == "True":
+                return movie_data
+
+        return None
 
     def add_movie(self, user_id, title):
         """
-        Adds a movie for a specific user after fetching its data from OMDb.
-        Returns a tuple: (success, message)
+        Fetches movie data and adds a new movie for a specific user.
+
+        Args:
+            user_id (int): The ID of the user.
+            title (str): The title of the movie.
+
+        Returns:
+            tuple: A tuple (success_boolean, message_string).
         """
         movie_data = self._fetch_movie_data(title)
 
@@ -70,29 +113,62 @@ class DataManager():
             return True, f"Movie '{new_movie.name}' added successfully!"
         except Exception as e:
             db.session.rollback()
-            return False, f"Error adding movie to database: {e}"
-
-    def delete_movie(self, movie_id):
-        """Deletes a movie by its ID."""
-        movie_to_delete = Movie.query.filter_by(id=movie_id).first()
-        if movie_to_delete:
-            db.session.delete(movie_to_delete)
-            db.session.commit()
-            return True
-        return False
-
-    def update_movie(self, movie_id, new_data):
-        """Updates a movie's information."""
-        movie_to_update = Movie.query.filter_by(id=movie_id).first()
-        if movie_to_update:
-            movie_to_update.name = new_data.get('name', movie_to_update.name)
-            movie_to_update.director = new_data.get('director', movie_to_update.director)
-            movie_to_update.year = new_data.get('year', movie_to_update.year)
-            movie_to_update.poster_url = new_data.get('poster_url', movie_to_update.poster_url)
-            db.session.commit()
-            return True
-        return False
+            return False, f"Error adding movie to database: {str(e)}"
 
     def get_movies_by_user(self, user_id):
-        """Gets all movies for a specific user."""
-        return Movie.query.filter_by(user_id=user_id).all()
+        """
+        Retrieves all movies for a specific user.
+
+        Args:
+            user_id (int): The ID of the user.
+
+        Returns:
+            list: A list of Movie objects.
+        """
+        user = self.get_user_by_id(user_id)
+        return user.movies if user else []
+
+    def update_movie(self, movie_id, new_name):
+        """
+        Updates the name of a specific movie.
+
+        Args:
+            movie_id (int): The ID of the movie.
+            new_name (str): The new name for the movie.
+
+        Returns:
+            tuple: A tuple (success_boolean, message_string).
+        """
+        movie = db.session.get(Movie, movie_id)
+        if not movie:
+            return False, "Movie not found."
+
+        try:
+            movie.name = new_name
+            db.session.commit()
+            return True, f"Movie updated to '{new_name}' successfully!"
+        except Exception as e:
+            db.session.rollback()
+            return False, f"Error updating movie: {str(e)}"
+
+    def delete_movie(self, movie_id):
+        """
+        Deletes a specific movie from the database.
+
+        Args:
+            movie_id (int): The ID of the movie to delete.
+
+        Returns:
+            tuple: A tuple (success_boolean, message_string).
+        """
+        movie = db.session.get(Movie, movie_id)
+        if not movie:
+            return False, "Movie not found."
+
+        try:
+            db.session.delete(movie)
+            db.session.commit()
+            return True, "Movie deleted successfully!"
+        except Exception as e:
+            db.session.rollback()
+            return False, f"Error deleting movie: {str(e)}"

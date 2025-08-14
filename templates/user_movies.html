@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ user.name }}'s Movies</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}{{ user.name }}'s Movies{% endblock %}
+
+{% block content %}
+    <a href="{{ url_for('index') }}">← Back to Users</a>
+
     <h1>{{ user.name }}'s Movies</h1>
 
     <h2>Favorite Movies</h2>
@@ -14,7 +14,25 @@
                 <li>
                     <h3>{{ movie.name }} ({{ movie.year }})</h3>
                     <p>Director: {{ movie.director }}</p>
-                    <img src="{{ movie.poster_url }}" alt="{{ movie.name }} Poster" style="width: 150px;">
+                    <img src="{{ movie.poster_url }}" 
+                         alt="{{ movie.name }} Poster" 
+                         style="width: 150px;">
+                    
+                    <form action="{{ url_for('update_movie', 
+                                              user_id=user.id, 
+                                              movie_id=movie.id) }}" 
+                          method="post" style="display:inline;">
+                        <input type="text" name="new_movie_name" 
+                               placeholder="New Movie Name" required>
+                        <button type="submit">Update</button>
+                    </form>
+
+                    <form action="{{ url_for('delete_movie', 
+                                              user_id=user.id, 
+                                              movie_id=movie.id) }}" 
+                          method="post" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>
@@ -23,10 +41,10 @@
     {% endif %}
 
     <h2>Add a New Movie</h2>
-    <form action="{{ url_for('add_movie_to_user', user_id=user.id) }}" method="post">
+    <form action="{{ url_for('add_movie_to_user', user_id=user.id) }}" 
+          method="post">
         <label for="movie_title">Movie Title:</label>
         <input type="text" id="movie_title" name="movie_title" required>
         <button type="submit">Add Movie</button>
     </form>
-</body>
-</html>
+{% endblock %}
