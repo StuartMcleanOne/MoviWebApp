@@ -20,7 +20,7 @@ A implementation of notes or a direct link to a trailer or to imdb would be the 
 -  **Movie Collection**: Each user can build and manage their own movie list.
 -  **Automated Data Fetching**: Enter a title, and details are pulled from the OMDb API.
 -  **Responsive Design**: Works seamlessly on desktop and mobile.
-- ✏ **CRUD Operations**: Add, view, edit, and delete movies and users.
+-  **CRUD Operations**: Add, view, edit, and delete movies and users.
 
 ##  Dependancies Used
 
