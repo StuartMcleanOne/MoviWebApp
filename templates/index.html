@@ -1,21 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Users{% endblock %}
+{% block title %}Users - MoviWeb{% endblock %}
 
 {% block content %}
-    <h1>Registered Users</h1>
-    <ul>
-        {% for user in users %}
-            <li><a href="{{ url_for('get_movies', user_id=user.id) }}">{{ user.name }}</a></li>
-        {% else %}
-            <li>No users found.</li>
-        {% endfor %}
-    </ul>
+    <section class="page-header">
+        <h1>Users</h1>
+        <p class="subtitle">Manage your movie collections</p>
+    </section>
 
-    <h2>Add a New User</h2>
-    <form action="{{ url_for('create_user') }}" method="post">
-        <label for="user_name">User Name:</label>
-        <input type="text" id="user_name" name="user_name" required>
-        <button type="submit">Add User</button>
-    </form>
+    <div class="layout-grid">
+        <div class="users-section">
+            {% if users %}
+                <div class="users-grid">
+                    {% for user in users %}
+                        <div class="user-card">
+                            <div class="user-avatar">{{ user.name[0].upper() }}</div>
+                            <h3>{{ user.name }}</h3>
+                            <p class="user-stats">{{ user.movies|length }} movies</p>
+                            <a href="{{ url_for('get_movies', user_id=user.id) }}" class="btn btn-primary">View Collection</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">👥</div>
+                    <h3>No users yet</h3>
+                    <p>Add your first user to get started</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="add-user-section">
+            <div class="form-card">
+                <h2>Add New User</h2>
+                <form action="{{ url_for('create_user') }}" method="post" class="form">
+                    <div class="form-group">
+                        <label for="user_name">User Name</label>
+                        <input type="text" id="user_name" name="user_name" class="form-input" placeholder="Enter name" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Add User</button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}
