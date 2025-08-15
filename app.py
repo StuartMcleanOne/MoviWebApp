@@ -125,6 +125,21 @@ def delete_movie(user_id, movie_id):
     flash(message, 'success' if success else 'error')
     return redirect(url_for('get_movies', user_id=user_id))
 
+@app.route('/users/<int:user_id>/delete', methods=['POST'])
+def delete_user(user_id):
+    """
+    Deletes a user and their movie collection.
+
+    Args:
+        user_id(int) : The ID of the user.
+
+    """
+    if data_manager.delete_user(user_id):
+        flash("User deleted successfully.", 'success')
+    else:
+        flash("User not found.", 'error')
+    return redirect(url_for('index'))
+
 
 @app.errorhandler(404)
 def page_not_found(e):

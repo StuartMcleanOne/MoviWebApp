@@ -172,3 +172,14 @@ class DataManager:
         except Exception as e:
             db.session.rollback()
             return False, f"Error deleting movie: {str(e)}"
+
+    def delete_user(self, user_id):
+        """
+        Deletes a user and all of their associated movies.
+        """
+        user = User.query.get(user_id)
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return True
+        return False

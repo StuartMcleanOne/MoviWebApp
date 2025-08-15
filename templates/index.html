@@ -17,7 +17,12 @@
                             <div class="user-avatar">{{ user.name[0].upper() }}</div>
                             <h3>{{ user.name }}</h3>
                             <p class="user-stats">{{ user.movies|length }} movies</p>
-                            <a href="{{ url_for('get_movies', user_id=user.id) }}" class="btn btn-primary">View Collection</a>
+                            <div class="user-actions">
+                                <a href="{{ url_for('get_movies', user_id=user.id) }}" class="btn btn-primary">View Collection</a>
+                                <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
                         </div>
                     {% endfor %}
                 </div>
