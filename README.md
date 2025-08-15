@@ -22,7 +22,7 @@ A implementation of notes or a direct link to a trailer or to imdb would be the 
 - 📱 **Responsive Design**: Works seamlessly on desktop and mobile.
 - ✏️ **CRUD Operations**: Add, view, edit, and delete movies and users.
 
-## 🛠️ Technologies Used
+## 🛠️ Dependancies Used
 
 | Technology         | Purpose                          |
 |--------------------|----------------------------------|
