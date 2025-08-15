@@ -10,11 +10,24 @@
     </div>
 
     <section class="page-header">
-        <h1>{{ user.name }}'s Collection</h1>
+        <h1>{{ user.name }}'s Recommendations</h1>
         <div class="collection-stats">{{ movies|length }} movies</div>
     </section>
 
-    <div class="layout-grid">
+   <div class="add-movie-section">
+    <div class="form-card">
+        <h2>Add Movie</h2>
+        <form action="{{ url_for('add_movie_to_user', user_id=user.id) }}" method="post" class="form">
+            <div class="form-group-inline">
+                <input type="text" id="movie_title" name="movie_title" class="form-input" placeholder="Enter movie title" required>
+                <button type="submit" class="btn btn-success">Add Movie</button>
+            </div>
+            <small class="form-help">Movie details will be fetched automatically</small>
+        </form>
+    </div>
+</div>
+
+    <div class="movies-container">
         <div class="movies-section">
             {% if movies %}
                 <div class="movies-grid">
@@ -52,22 +65,9 @@
             {% endif %}
         </div>
 
-        <div class="add-movie-section">
-            <div class="form-card sticky">
-                <h2>Add Movie</h2>
-                <form action="{{ url_for('add_movie_to_user', user_id=user.id) }}" method="post" class="form">
-                    <div class="form-group">
-                        <label for="movie_title">Movie Title</label>
-                        <input type="text" id="movie_title" name="movie_title" class="form-input" placeholder="Enter movie title" required>
-                        <small class="form-help">Movie details will be fetched automatically</small>
-                    </div>
-                    <button type="submit" class="btn btn-success">Add Movie</button>
-                </form>
-            </div>
-        </div>
+
     </div>
 
-    <!-- Update Modal -->
     <div id="updateModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -87,7 +87,6 @@
         </div>
     </div>
 
-    <!-- Delete Modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -108,15 +107,17 @@
     </div>
 
     <script>
+        const userId = {{ user.id }};
+
         function openUpdateModal(movieId, movieName) {
             document.getElementById('new_movie_name').value = movieName;
-            document.getElementById('updateForm').action = `/users/{{ user.id }}/movies/${movieId}/update`;
+            document.getElementById('updateForm').action = `{{ url_for('update_movie', user_id=user.id, movie_id=999) }}`.replace('999', movieId);
             document.getElementById('updateModal').style.display = 'block';
         }
 
         function openDeleteModal(movieId, movieName) {
             document.getElementById('deleteMovieName').textContent = movieName;
-            document.getElementById('deleteForm').action = `/users/{{ user.id }}/movies/${movieId}/delete`;
+            document.getElementById('deleteForm').action = `{{ url_for('delete_movie', user_id=user.id, movie_id=999) }}`.replace('999', movieId);
             document.getElementById('deleteModal').style.display = 'block';
         }
 
