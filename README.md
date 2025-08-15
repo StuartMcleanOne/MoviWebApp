@@ -1,4 +1,4 @@
-# 🎬 MoviWeb
+#  MoviWeb
 
 ### Website hosted on pythonanywhere until 15 November 2025
 
@@ -8,21 +8,21 @@ at Masterschool.
 
 
 
-## 📖 Description
+##  Description
 
 MoviWeb is a Flask-based web app that lets friends create and manage their own movie catalogues as recommendations for groups of friends. Just enter a movie title, and MoviWeb fetches details like the poster, release year, and director using the OMDb API. With a clean, responsive design and a SQLite backend. 
 
 A implementation of notes or a direct link to a trailer or to imdb would be the next logical iteration here. That and probably not allowing just anyone to delete other peoples profiles. Lol
 
-## 🚀 Features
+##  Features
 
-- 👤 **User Management**: Create and view individual user profiles.
-- 🎥 **Movie Collection**: Each user can build and manage their own movie list.
-- 🔍 **Automated Data Fetching**: Enter a title, and details are pulled from the OMDb API.
-- 📱 **Responsive Design**: Works seamlessly on desktop and mobile.
-- ✏️ **CRUD Operations**: Add, view, edit, and delete movies and users.
+-  **User Management**: Create and view individual user profiles.
+-  **Movie Collection**: Each user can build and manage their own movie list.
+-  **Automated Data Fetching**: Enter a title, and details are pulled from the OMDb API.
+-  **Responsive Design**: Works seamlessly on desktop and mobile.
+- ✏ **CRUD Operations**: Add, view, edit, and delete movies and users.
 
-## 🛠️ Dependancies Used
+##  Dependancies Used
 
 | Technology         | Purpose                          |
 |--------------------|----------------------------------|
